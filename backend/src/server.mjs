@@ -1,27 +1,43 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import "./utils/local-strategy.mjs";
+import passport from "passport";
+import pgSimpleSession from "connect-pg-simple";
+import pool from "./db.mjs";
+const pgSession = pgSimpleSession(session);
+import cors from "cors";
+import appRouter from "./routes/routes.mjs";
 
 const app = express();
-app.use(cookieParser("islamsecret"));
 app.use(express.json());
-app.use(session({
-  secret: "islamsecret",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 60000 * 60
-  }
-}))
-
+app.use(cors({ origin: true, credentials: true }));
+app.use(cookieParser("islamsecret"));
+app.use(
+  session({
+    store: new pgSession({
+      pool: pool,
+      tableName: "session",
+    }),
+    secret: "islamsecret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7
+    },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use("/api",appRouter);
 
 app.get("/", (req, res) => {
-  console.log(req.cookies)
-  console.log(req.session)
-  console.log(req.sessionID)
-  res.cookie("visited", true, { maxAge: 60000 });
-  res.send("Hello World!");
-});
+  if (req.user) {
+    res.send(req.user.firstname + " " + req.user.lastname);
+  } else {
+    res.send("Hello!")
+  }
+})
 
 const appStart = () => {
   try {
