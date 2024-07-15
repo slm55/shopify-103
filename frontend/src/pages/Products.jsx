@@ -6,11 +6,11 @@ import Skeleton from "@mui/material/Skeleton";
 
 function Products() {
   const [products, setProducts] = useState(null);
-  const [categories, setCategories] = useState(null);
+  // const [categories, setCategories] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const query = new URLSearchParams(window.location.search);
-  const category = query.get("category");
+  // const query = new URLSearchParams(window.location.search);
+  // const category = query.get("category");
   const navigate = useNavigate();
 
   async function getAllProducts() {
@@ -28,50 +28,50 @@ function Products() {
       });
   }
 
-  async function getCategories() {
-    productService
-    .getCategories()
-    .then(res => res.data)
-    .then(objects => objects.map(obj => obj.category))
-    .then(data => setCategories(["all", ...data]))
-    .catch(err => alert(err.message));
-  }
+  // async function getCategories() {
+  //   productService
+  //   .getCategories()
+  //   .then(res => res.data)
+  //   .then(objects => objects.map(obj => obj.category))
+  //   .then(data => setCategories(["all", ...data]))
+  //   .catch(err => alert(err.message));
+  // }
 
   useEffect(() => {
-    getCategories();
+    // getCategories();
     getAllProducts();
   }, []);
 
-  useEffect(() => {
-    if (!category) {
-      getAllProducts();
-    } else {
-      productService
-        .getProductsByCategory(category)
-        .then((response) => response.data)
-        .then((data) => {
-          console.log(data);
-          setProducts(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          setError(error);
-          setLoading(false);
-        });
-    }
-  }, [category]);
+  // useEffect(() => {
+  //   if (!category) {
+  //     getAllProducts();
+  //   } else {
+  //     productService
+  //       .getProductsByCategory(category)
+  //       .then((response) => response.data)
+  //       .then((data) => {
+  //         console.log(data);
+  //         setProducts(data);
+  //         setLoading(false);
+  //       })
+  //       .catch((error) => {
+  //         setError(error);
+  //         setLoading(false);
+  //       });
+  //   }
+  // }, [category]);
 
   return (
     <div className="flex-1 py-8 px-10">
       <h1 className="text-3xl text-center font-bold ">Products</h1>
       {error && <h1>{error.message}</h1>}
-      <div className="flex space-x-2">
+{/*       <div className="flex space-x-2">
       {
         categories && categories.map(category => (
           <button className="text-white bg-black rounded px-4 py-2 hover:bg-gray-700" onClick={() => navigate(category == "all" ? "/products" : "?category="+category)}>{category}</button>
         ))
       }
-      </div>
+      </div> */}
 
       <div className="flex flex-wrap items-start flex-1 justify-center h-full py-4 space-x-6 ">
         {products &&
